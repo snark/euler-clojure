@@ -44,15 +44,13 @@
   ))
 
 (defn score-hands [player1 player2]
-  (let [hand1 (arrange-hand player1)
-        hand2 (arrange-hand player2)
-        ranked1 (cons (get hand-ranks (evaluate-hand hand1)) (map rank hand1))
-        ranked2 (cons (get hand-ranks (evaluate-hand hand2)) (map rank hand2))
-        ]
+  (let [rank-hand (fn [hand] (cons (get hand-ranks (evaluate-hand hand)) (map rank hand)))
+        ranked1 (rank-hand player1)
+        ranked2 (rank-hand player2)]
     (compare (into [] ranked1) (into [] ranked2))))
 
 (defn evaluate [cardstring]
   (let [cards (clojure.string/split cardstring #" ")]
-    (if (= 1 (score-hands (take 5 cards) (drop 5 cards))) 1 0)))
+    (if (= 1 (score-hands (arrange-hand (take 5 cards)) (arrange-hand (drop 5 cards)))) 1 0)))
 
 (println (reduce + (map evaluate (clojure.string/split-lines file))))
