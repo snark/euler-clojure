@@ -24,22 +24,21 @@
 (defn is-flush? [hand]
   (= 1 (count (distinct (map suit hand)))))
 
+; This ignores ace-low straights, which are irrelevant to the problem set
 (defn is-straight? [hand]
-  (or
-    (= 4 (- (rank (first hand)) (rank (last hand))))
-    (and (= (rank (first hand)) 0) (= (rank (last hand)) 12))))
+    (= 4 (- (rank (first hand)) (rank (last hand)))))
 
 (defn evaluate-hand [hand]
   (cond
-    (and (is-straight? hand) (is-flush? hand)) :straightflush
     (= (rank (first hand)) (rank (nth hand 3))) :fourofkind
     (= (rank (nth hand 3)) (rank (nth hand 4))) :fullhouse
-    (is-flush? hand) :flush
-    (is-straight? hand) :straight
     (= (rank (first hand)) (rank (nth hand 2))) :threeofkind
     (= (rank (nth hand 2)) (rank (nth hand 3))) :twopair
     (= (rank (first hand)) (rank (nth hand 2))) :threeofkind
     (= (rank (first hand)) (rank (second hand))) :pair
+    (and (is-straight? hand) (is-flush? hand)) :straightflush
+    (is-flush? hand) :flush
+    (is-straight? hand) :straight
     :else :highcard
   ))
 
@@ -49,9 +48,6 @@
         ranked1 (cons (get hand-ranks (evaluate-hand hand1)) (map rank hand1))
         ranked2 (cons (get hand-ranks (evaluate-hand hand2)) (map rank hand2))
         ]
-    (println ranked1)
-    (println ranked2)
-    (println (compare (into [] ranked1) (into [] ranked2)))
     (compare (into [] ranked1) (into [] ranked2))))
 
 (def line "5H 5C 6S 7S KD 2C 3S 8S 8D TD")
