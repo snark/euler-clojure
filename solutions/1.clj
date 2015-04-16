@@ -1,10 +1,8 @@
 (defn threefive-sum [size]
-  (reduce +
-    (filter (fn [n]
-      (or
-        (zero? (mod n 3))
-        (zero? (mod n 5))))
-      (range size))))
+  (->> (range size)
+       (filter #(or (zero? (mod % 3))
+                    (zero? (mod % 5))))
+       (reduce +)))
 
 (println (threefivesum 1000))
 
