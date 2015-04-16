@@ -1,5 +1,4 @@
 (def file (slurp "data/p054_poker.txt"))
-;(def file (slurp "data/p054_dummy.txt"))
 
 ;Clojure has no native list indexing function, so let's build hashes
 (def hand-ranks {:highcard 0, :pair 1, :twopair 2, :threeofkind 3, :straight 4, :flush 5, :fullhouse 6, :fourofkind 7, :straightflush 8})
@@ -24,7 +23,9 @@
 (defn is-flush? [hand]
   (= 1 (count (distinct (map suit hand)))))
 
-; This ignores ace-low straights, which are irrelevant to the problem set
+; This ignores ace-low straights, which are irrelevant to the problem set;
+; the check is also positionally-dependent, since duplicate cards will
+; found our logic.
 (defn is-straight? [hand]
     (= 4 (- (rank (first hand)) (rank (last hand)))))
 
@@ -49,9 +50,6 @@
         ranked2 (cons (get hand-ranks (evaluate-hand hand2)) (map rank hand2))
         ]
     (compare (into [] ranked1) (into [] ranked2))))
-
-(def line "5H 5C 6S 7S KD 2C 3S 8S 8D TD")
-(def line2 "2C 3S 8S 8D TD 5H 5C 6S 7S KD")
 
 (defn evaluate [cardstring]
   (let [cards (clojure.string/split cardstring #" ")]
