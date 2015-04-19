@@ -1,5 +1,11 @@
 (def file (slurp "data/p054_poker.txt"))
 
+;Our mechanism here is to turn the line into two 5-item lists (sorted by matching-cards first, then
+;by the card's face value). We then prepend a numeric ranking of the hand to the list and transform
+;to remove the suit value; we're left with, e.g. (2 8 8 3 3 10), representing two pair, tens over
+;fives. This list gets transformed into a vector and then compared to player two's hand using
+;straight vector comparison.
+
 ;Clojure has no native list indexing function, so let's build hashes
 (def hand-ranks {:highcard 0, :pair 1, :twopair 2, :threeofkind 3, :straight 4, :flush 5, :fullhouse 6, :fourofkind 7, :straightflush 8})
 (def face-ranks {\2 0, \3 1, \4 2, \5 3, \6 4, \7 5, \8 6, \9 7, \T 8, \J 9, \Q 10, \K 11, \A 12})
@@ -44,10 +50,8 @@
   ))
 
 (defn score-hands [player1 player2]
-  (let [rank-hand (fn [hand] (cons (get hand-ranks (evaluate-hand hand)) (map rank hand)))
-        ranked1 (rank-hand player1)
-        ranked2 (rank-hand player2)]
-    (compare (into [] ranked1) (into [] ranked2))))
+  (let [rank-hand (fn [hand] (cons (get hand-ranks (evaluate-hand hand)) (map rank hand)))]
+    (compare (into [] (rank-hand player1)) (into [] (rank-hand player2)))))
 
 (defn evaluate [cardstring]
   (let [cards (clojure.string/split cardstring #" ")]
